@@ -1,16 +1,15 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2020-06-30T10:43:13
+# Project created by QtCreator 2020-07-02T10:05:00
 #
 #-------------------------------------------------
 
 QT       += core gui
-QT       += core gui charts
 QT       += sql
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = CHproject
+TARGET = QCPtest
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -31,12 +30,15 @@ LIBS += -L/home/slava/newclickhouse/build/clickhouse -lclickhouse-cpp-lib-static
 LIBS += -L/home/slava/newclickhouse/build/contrib/lz4 -llz4-lib
 LIBS += -L/home/slava/newclickhouse/build/contrib/cityhash -lcityhash-lib
 
+
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+            qcustomplot.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    qcustomplot.h
 
 FORMS += \
         mainwindow.ui
