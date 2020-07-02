@@ -1,54 +1,12 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-using namespace clickhouse;
-using namespace std;
+#include <QTimer>
 
 int intrand(int min, int max){
     static const double fraction = 1.0/(static_cast<double>(RAND_MAX)+1.0);
 
     return static_cast<int>(rand()*fraction*(max-min+1)*min);
-}
-
-string too_string(int n)
-{
-    char buf[40];
-    sprintf(buf,"%d",n);
-    return buf;
-}
-
-int tableobserver()
-{
-    MainWindow W;
-    std::vector<int>TOid;
-    std::vector<float>TOname;
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC");
-    db.setHostName("localhost");
-    db.setDatabaseName("mysql_db");
-    db.setUserName("");
-    db.setPassword("");
-    bool connected = db.open();
-
-    if(!connected){
-        cout << "connect fail" << endl;
-        return 1;
-    }
-
-    QSqlQueryModel model;
-    model.setQuery("select * from test.numbers");
-
-    for (int i = 0; i < model.rowCount(); ++i){
-        QSqlRecord record = model.record(i);
-
-        TOid.push_back(record.value("id").toInt());
-        TOname.push_back(record.value("name").toFloat());
-        //Тут должен вызываться отрисовщик графика раз в 0.25 сек
-        W.drawgraph(TOid, TOname);
-        TOid.clear();
-        TOname.clear();
-    }
-    return 0;
 }
 
 void clientfunc(Client& client)
@@ -81,7 +39,7 @@ void clientfunc(Client& client)
 
         time++;
 
-        tableobserver();
+        //tableobserver();
 
         sleep(1);
     }
@@ -100,33 +58,19 @@ void clientfunc(Client& client)
     client.Execute("DROP TABLE test.numbers");
 }
 
-
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
 
-
     // Initialize client connection.
-    Client client(ClientOptions().SetHost("localhost"));
-    cout << "success" << endl;
+    //Client client(ClientOptions().SetHost("localhost"));
+    //cout << "success" << endl;
 
-    //std::thread first(clientfunc, client);
-    //std::thread second(tableobserver);
-
-    // synchronize threads:
-    //first.join();                // pauses until first finishes
-    //second.join();               // pauses until second finishes
-
-    //std::cout << "foo and bar completed.\n";
+    //clientfunc(client);
 
     //return 0;
-
-    clientfunc(client);
-
-    return 0;
 
     return a.exec();
 }
