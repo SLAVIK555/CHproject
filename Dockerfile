@@ -4,34 +4,36 @@ FROM ubuntu:18.04
 # Установим обновления
 RUN apt-get update
 
-#Для сборки кликхауса понадобиться компилятор gcc9
-RUN apt install -y software-properties-common
+#add https support
+RUN apt -y install apt-transport-https
+
+# Установим gcc-9 and g++-9
+RUN apt -y install build-essential
+RUN apt -y install software-properties-common
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
-RUN apt install -y gcc-9 g++-9
-RUN update-alternatives --install -y /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9
+RUN apt-get -y install gcc-9 g++-9
+RUN update-alternatives —install /usr/bin/gcc gcc /usr/bin/gcc-9 90 —slave /usr/bin/g++ g++ /usr/bin/g++-9
 
-#Установим гит и симейк
-RUN apt install -y git
-RUN apt-get install -y cmake
+#git and cmake and python
+RUN apt -y install git
+RUN apt -y install cmake
+RUN apt -y install python3-pip
 
-#Скопируем необходисые файлы исходники для сборки Кликхаус
+#clone clickhouse
 RUN mkdir newclickhouse
 RUN cd newclickhouse
 RUN git clone https://github.com/artpaul/clickhouse-cpp.git
 
-#Выполняем сборку Кликхауса из исходников
+#make clickhouse
 RUN mkdir build
-RUN cd build
-RUN cmake ../clickhouse-cpp
-RUN make
+RUN cd build && cmake ../ch/clickhouse-cpp && make
 
-#Откасимся назад
-RUN cd ..
+#install python clickhouse-driver
+RUN pip3 install clickhouse-driver[lz4]
 
-#Установим qt
-RUN apt-get install -y qt5-default
-RUN apt-get install -y qtcreator
-RUN apt install -y qtbase5-examples qtdeclarative5-examples
+#qt5
+RUN apt -y install qt5-default
+RUN apt -y install qtcreator
 
 #Установим необходимые дополнительные модули
 #RUN apt-get install -y qtbase5-dev
@@ -57,7 +59,6 @@ RUN cd ..
 RUN service clickhouse-server start
 RUN clickhouse-client
 
- 
 #Скопируем файлы исходного кода нашей программы
-RUN cd newclickhouse
-RUN git clone https://github.com/SLAVIK555/QCPtest.git
+RUN mkdir newclickhouse
+RUN cd newclickhouse && git clone https://github.com/SLAVIK555/QCPtest.git
